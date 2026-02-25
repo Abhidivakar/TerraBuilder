@@ -3082,7 +3082,103 @@ body::after {
   border-color: rgba(239, 68, 68, 0.4);
 }
 
+[data-theme="light"] #toast {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.09);
+  color: #0f172a;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] #toast.ok {
+  border-color: rgba(22, 163, 74, 0.4);
+}
+
+[data-theme="light"] #toast.err {
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
+
+
+/* ═══ PROVIDER BAR ════════════════════════════════════════ */
+.provider-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.prov-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--t2);
+  font-size: .8rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+  position: relative;
+}
+
+.prov-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--t1);
+}
+
+.prov-btn.active {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: var(--t1);
+}
+
+.prov-btn[data-provider="aws"].active {
+  background: rgba(255, 153, 0, 0.1);
+  border-color: rgba(255, 153, 0, 0.4);
+}
+
+.prov-btn[data-provider="azure"].active {
+  background: rgba(0, 120, 212, 0.1);
+  border-color: rgba(0, 120, 212, 0.4);
+}
+
+.prov-coming {
+  display: inline-block;
+  padding: 1px 6px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 999px;
+  font-size: .67rem;
+  font-weight: 600;
+  color: #f59e0b;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* Light mode */
+[data-theme="light"] .prov-btn {
+  background: #fff;
+  border-color: rgba(0, 0, 0, 0.09);
+  color: #64748b;
+}
+
+[data-theme="light"] .prov-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+[data-theme="light"] .prov-btn.active {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.35);
+  color: #3730a3;
+}
+
 /* ═══ RESPONSIVE ════════════════════════════════════════ */
+
 @media (max-width:900px) {
   .platform-grid {
     grid-template-columns: repeat(2, 1fr);

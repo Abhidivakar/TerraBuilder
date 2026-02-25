@@ -6,6 +6,7 @@
 // ── STATE ─────────────────────────────────────
 const S = {
   page: 'home',
+  provider: 'gcp',       // active cloud provider
   project: '',
   file: null,
   resources: [],
@@ -14,73 +15,207 @@ const S = {
   promptVersion: 'v1',
 };
 
+// ── PROVIDERS ─────────────────────────────────
+const PROVIDERS = [
+  {
+    id: 'gcp',
+    label: 'Google Cloud',
+    shortLabel: 'GCP',
+    color: '#4285F4',
+    status: 'active',
+    serviceCount: 28,
+  },
+  {
+    id: 'aws',
+    label: 'Amazon Web Services',
+    shortLabel: 'AWS',
+    color: '#FF9900',
+    status: 'coming-soon',
+    serviceCount: 0,
+  },
+  {
+    id: 'azure',
+    label: 'Microsoft Azure',
+    shortLabel: 'Azure',
+    color: '#0078D4',
+    status: 'coming-soon',
+    serviceCount: 0,
+  },
+];
+
+// ── SERVICES ──────────────────────────────────
 const GCP_ICONS = 'google-cloud-legacy-icons';
-const SERVICES = [
-  { name: 'Cloud Run', icon: `${GCP_ICONS}/cloud_run/cloud_run.svg` },
-  { name: 'Cloud SQL', icon: `${GCP_ICONS}/cloud_sql/cloud_sql.svg` },
-  { name: 'BigQuery', icon: `${GCP_ICONS}/bigquery/bigquery.svg` },
-  { name: 'Cloud Storage', icon: `${GCP_ICONS}/cloud_storage/cloud_storage.svg` },
-  { name: 'Pub/Sub', icon: `${GCP_ICONS}/pubsub/pubsub.svg` },
-  { name: 'Cloud Functions', icon: `${GCP_ICONS}/cloud_functions/cloud_functions.svg` },
-  { name: 'GKE', icon: `${GCP_ICONS}/google_kubernetes_engine/google_kubernetes_engine.svg` },
-  { name: 'Compute Engine', icon: `${GCP_ICONS}/compute_engine/compute_engine.svg` },
-  { name: 'Cloud Armor', icon: `${GCP_ICONS}/cloud_armor/cloud_armor.svg` },
-  { name: 'VPC', icon: `${GCP_ICONS}/virtual_private_cloud/virtual_private_cloud.svg` },
-  { name: 'Cloud NAT', icon: `${GCP_ICONS}/cloud_nat/cloud_nat.svg` },
-  { name: 'Load Balancer', icon: `${GCP_ICONS}/cloud_load_balancing/cloud_load_balancing.svg` },
-  { name: 'Artifact Registry', icon: `${GCP_ICONS}/artifact_registry/artifact_registry.svg` },
-  { name: 'Secret Manager', icon: `${GCP_ICONS}/secret_manager/secret_manager.svg` },
-  { name: 'IAM', icon: `${GCP_ICONS}/identity_and_access_management/identity_and_access_management.svg` },
-  { name: 'Cloud Build', icon: `${GCP_ICONS}/cloud_build/cloud_build.svg` },
-  { name: 'Cloud Spanner', icon: `${GCP_ICONS}/cloud_spanner/cloud_spanner.svg` },
-  { name: 'Firestore', icon: `${GCP_ICONS}/firestore/firestore.svg` },
-  { name: 'Bigtable', icon: `${GCP_ICONS}/bigtable/bigtable.svg` },
-  { name: 'Dataflow', icon: `${GCP_ICONS}/dataflow/dataflow.svg` },
-  { name: 'Composer', icon: `${GCP_ICONS}/cloud_composer/cloud_composer.svg` },
-  { name: 'Memorystore', icon: `${GCP_ICONS}/memorystore/memorystore.svg` },
-  { name: 'Cloud DNS', icon: `${GCP_ICONS}/cloud_dns/cloud_dns.svg` },
-  { name: 'Cloud CDN', icon: `${GCP_ICONS}/cloud_cdn/cloud_cdn.svg` },
-  { name: 'Cloud Scheduler', icon: `${GCP_ICONS}/cloud_scheduler/cloud_scheduler.svg` },
-  { name: 'Cloud Tasks', icon: `${GCP_ICONS}/cloud_tasks/cloud_tasks.svg` },
-  { name: 'Vertex AI', icon: `${GCP_ICONS}/vertexai/vertexai.svg` },
-  { name: 'Dataproc', icon: `${GCP_ICONS}/dataproc/dataproc.svg` },
-];
+const SERVICES_BY_PROVIDER = {
+  gcp: [
+    { name: 'Cloud Run', icon: `${GCP_ICONS}/cloud_run/cloud_run.svg` },
+    { name: 'Cloud SQL', icon: `${GCP_ICONS}/cloud_sql/cloud_sql.svg` },
+    { name: 'BigQuery', icon: `${GCP_ICONS}/bigquery/bigquery.svg` },
+    { name: 'Cloud Storage', icon: `${GCP_ICONS}/cloud_storage/cloud_storage.svg` },
+    { name: 'Pub/Sub', icon: `${GCP_ICONS}/pubsub/pubsub.svg` },
+    { name: 'Cloud Functions', icon: `${GCP_ICONS}/cloud_functions/cloud_functions.svg` },
+    { name: 'GKE', icon: `${GCP_ICONS}/google_kubernetes_engine/google_kubernetes_engine.svg` },
+    { name: 'Compute Engine', icon: `${GCP_ICONS}/compute_engine/compute_engine.svg` },
+    { name: 'Cloud Armor', icon: `${GCP_ICONS}/cloud_armor/cloud_armor.svg` },
+    { name: 'VPC', icon: `${GCP_ICONS}/virtual_private_cloud/virtual_private_cloud.svg` },
+    { name: 'Cloud NAT', icon: `${GCP_ICONS}/cloud_nat/cloud_nat.svg` },
+    { name: 'Load Balancer', icon: `${GCP_ICONS}/cloud_load_balancing/cloud_load_balancing.svg` },
+    { name: 'Artifact Registry', icon: `${GCP_ICONS}/artifact_registry/artifact_registry.svg` },
+    { name: 'Secret Manager', icon: `${GCP_ICONS}/secret_manager/secret_manager.svg` },
+    { name: 'IAM', icon: `${GCP_ICONS}/identity_and_access_management/identity_and_access_management.svg` },
+    { name: 'Cloud Build', icon: `${GCP_ICONS}/cloud_build/cloud_build.svg` },
+    { name: 'Cloud Spanner', icon: `${GCP_ICONS}/cloud_spanner/cloud_spanner.svg` },
+    { name: 'Firestore', icon: `${GCP_ICONS}/firestore/firestore.svg` },
+    { name: 'Bigtable', icon: `${GCP_ICONS}/bigtable/bigtable.svg` },
+    { name: 'Dataflow', icon: `${GCP_ICONS}/dataflow/dataflow.svg` },
+    { name: 'Composer', icon: `${GCP_ICONS}/cloud_composer/cloud_composer.svg` },
+    { name: 'Memorystore', icon: `${GCP_ICONS}/memorystore/memorystore.svg` },
+    { name: 'Cloud DNS', icon: `${GCP_ICONS}/cloud_dns/cloud_dns.svg` },
+    { name: 'Cloud CDN', icon: `${GCP_ICONS}/cloud_cdn/cloud_cdn.svg` },
+    { name: 'Cloud Scheduler', icon: `${GCP_ICONS}/cloud_scheduler/cloud_scheduler.svg` },
+    { name: 'Cloud Tasks', icon: `${GCP_ICONS}/cloud_tasks/cloud_tasks.svg` },
+    { name: 'Vertex AI', icon: `${GCP_ICONS}/vertexai/vertexai.svg` },
+    { name: 'Dataproc', icon: `${GCP_ICONS}/dataproc/dataproc.svg` },
+  ],
+  // ── Populate when AWS support launches ──
+  aws: [],
+  // ── Populate when Azure support launches ──
+  azure: [],
+};
+
+// ── EXTRACT LOGS (provider-aware) ─────────────
+function getExtractLogs() {
+  const p = PROVIDERS.find(p => p.id === S.provider);
+  return [
+    '> Parsing image metadata…',
+    '> Running vision analysis on diagram…',
+    `> Identifying ${p ? p.shortLabel : ''} service icons…`,
+    '> Mapping connectivity patterns…',
+    '> Cross-referencing known architectures…',
+    '> Extracting resource nodes…',
+    '> Processing relationships…',
+    '> Computing environment requirements…',
+    '> Finalizing resource list…',
+  ];
+}
+
+// ── TERRAFORM BOILERPLATE BY PROVIDER ─────────
+const GEN_LINES_BY_PROVIDER = {
+  gcp: [
+    '# Auto-generated by TerraBuilder AI',
+    '',
+    'terraform {',
+    '  required_version = ">= 1.5.0"',
+    '  required_providers {',
+    '    google = {',
+    '      source  = "hashicorp/google"',
+    '      version = "~> 5.0"',
+    '    }',
+    '  }',
+    '  backend "gcs" {',
+    '    bucket = "tf-state-{PROJECT}"',
+    '    prefix = "terraform/state"',
+    '  }',
+    '}',
+    '',
+    'provider "google" {',
+    '  project = var.project_id',
+    '  region  = var.region',
+    '}',
+  ],
+  aws: [
+    '# Auto-generated by TerraBuilder AI',
+    '',
+    'terraform {',
+    '  required_version = ">= 1.5.0"',
+    '  required_providers {',
+    '    aws = {',
+    '      source  = "hashicorp/aws"',
+    '      version = "~> 5.0"',
+    '    }',
+    '  }',
+    '  backend "s3" {',
+    '    bucket = "tf-state-{PROJECT}"',
+    '    key    = "terraform/state"',
+    '    region = var.region',
+    '  }',
+    '}',
+    '',
+    'provider "aws" {',
+    '  region = var.region',
+    '}',
+  ],
+  azure: [
+    '# Auto-generated by TerraBuilder AI',
+    '',
+    'terraform {',
+    '  required_version = ">= 1.5.0"',
+    '  required_providers {',
+    '    azurerm = {',
+    '      source  = "hashicorp/azurerm"',
+    '      version = "~> 3.0"',
+    '    }',
+    '  }',
+    '  backend "azurerm" {',
+    '    resource_group_name  = "tf-state-rg"',
+    '    storage_account_name = "tfstate{PROJECT}"',
+    '    container_name       = "tfstate"',
+    '    key                  = "terraform.tfstate"',
+    '  }',
+    '}',
+    '',
+    'provider "azurerm" {',
+    '  features {}',
+    '}',
+  ],
+};
+
+// ── SET PROVIDER ───────────────────────────────
+function setProvider(id) {
+  const prov = PROVIDERS.find(p => p.id === id);
+  if (!prov) return;
+
+  if (prov.status === 'coming-soon') {
+    showToast(`${prov.label} support is coming soon!`, 'ok');
+    return;
+  }
+
+  S.provider = id;
+
+  // Update provider switcher pills
+  document.querySelectorAll('.prov-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.provider === id);
+  });
+
+  // Update dynamic text throughout the UI
+  const heroProvEl = document.getElementById('heroProviderName');
+  if (heroProvEl) heroProvEl.textContent = prov.label;
+
+  const heroBadgeEl = document.getElementById('heroBadge');
+  if (heroBadgeEl) heroBadgeEl.textContent = `AI-Powered · ${prov.shortLabel} Infrastructure Generation`;
+
+  const promptsLabelEl = document.getElementById('promptsProviderLabel');
+  if (promptsLabelEl) {
+    const count = (SERVICES_BY_PROVIDER[id] || []).length;
+    promptsLabelEl.textContent = `${count} ${prov.shortLabel} service${count !== 1 ? 's' : ''}`;
+  }
+
+  const buildProvEl = document.getElementById('buildProviderBadge');
+  if (buildProvEl) {
+    buildProvEl.textContent = prov.shortLabel;
+    buildProvEl.style.color = prov.color;
+  }
+
+  const statsServicesEl = document.getElementById('statServiceCount');
+  if (statsServicesEl) {
+    const count = (SERVICES_BY_PROVIDER[id] || []).length;
+    statsServicesEl.textContent = count || '—';
+  }
+
+  // Re-render services grid if on prompts page
+  renderServices(document.getElementById('srchInput')?.value || '');
+}
 
 
-const EXTRACT_LOGS = [
-  '> Parsing image metadata…',
-  '> Running vision analysis on diagram…',
-  '> Identifying GCP service icons…',
-  '> Mapping connectivity patterns…',
-  '> Cross-referencing known architectures…',
-  '> Extracting resource nodes…',
-  '> Processing relationships…',
-  '> Computing environment requirements…',
-  '> Finalizing resource list…',
-];
-
-const GEN_LINES = [
-  '# Auto-generated by TerraBuilder AI',
-  '',
-  'terraform {',
-  '  required_version = ">= 1.5.0"',
-  '  required_providers {',
-  '    google = {',
-  '      source  = "hashicorp/google"',
-  '      version = "~> 5.0"',
-  '    }',
-  '  }',
-  '  backend "gcs" {',
-  '    bucket = "tf-state-{PROJECT}"',
-  '    prefix = "terraform/state"',
-  '  }',
-  '}',
-  '',
-  'provider "google" {',
-  '  project = var.project_id',
-  '  region  = var.region',
-  '}',
-];
 
 const PIPELINE_YAML = {
   github: `name: Terraform CI/CD
@@ -474,7 +609,7 @@ function generateTerraform() {
   let i = 0;
 
   const lines = [
-    ...GEN_LINES,
+    ...(GEN_LINES_BY_PROVIDER[S.provider] || GEN_LINES_BY_PROVIDER.gcp),
     '',
     '# ── Resources ──────────────────────────────────',
     ...S.resources.flatMap(r => [
@@ -538,6 +673,7 @@ function renderServices(q) {
   const count = document.getElementById('srchCount');
   const query = (q || '').trim().toLowerCase();
 
+  const SERVICES = SERVICES_BY_PROVIDER[S.provider] || [];
   const filtered = query ? SERVICES.filter(s => s.name.toLowerCase().includes(query)) : SERVICES;
 
   document.getElementById('emptyQ') && (document.getElementById('emptyQ').textContent = query);

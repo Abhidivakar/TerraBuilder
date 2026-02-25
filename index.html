@@ -113,10 +113,11 @@
       <div class="home-hero-wrap">
         <div class="home-left">
           <div class="pill-badge">
-            <span class="pulse-ring"></span>AI-Powered · GCP Infrastructure Generation
+            <span class="pulse-ring"></span><span id="heroBadge">AI-Powered · GCP Infrastructure Generation</span>
           </div>
           <h1 class="hero-h">Your architecture.<br /><em>Terraform in seconds.</em></h1>
-          <p class="hero-p">Drop your GCP architecture diagram. TerraBuilder's AI reads every service, extracts
+          <p class="hero-p">Drop your <span id="heroProviderName">Google Cloud</span> architecture diagram.
+            TerraBuilder's AI reads every service, extracts
             resources, and writes production-ready Terraform — no manual configuration needed.</p>
 
           <!-- Drop zone -->
@@ -187,7 +188,7 @@
         </div>
         <div class="ss-div"></div>
         <div class="ss-item">
-          <span class="ss-num ss-n-b">28</span>
+          <span class="ss-num ss-n-b" id="statServiceCount">28</span>
           <span class="ss-lbl">GCP services</span>
         </div>
         <div class="ss-div"></div>
@@ -555,7 +556,8 @@
         <div class="prompts-header">
           <div>
             <h1>Prompt Library</h1>
-            <p>Pre-built AI prompts for 28 GCP services. V1 for direct snippets, V2 for production modules.</p>
+            <p>Pre-built AI prompts for <span id="promptsProviderLabel">28 GCP services</span>. V1 for direct snippets,
+              V2 for production modules.</p>
           </div>
           <div class="version-toggle">
             <button class="vt-btn active" id="vt-v1" onclick="setVersion('v1')">V1 Basic</button>
@@ -572,6 +574,37 @@
             </svg>
             <span id="viText">V1 — Single resource block, static values, great for quick snippets</span>
           </div>
+        </div>
+
+        <!-- Provider switcher -->
+        <div class="provider-bar">
+          <button class="prov-btn active" data-provider="gcp" onclick="setProvider('gcp')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#4285F4"
+                opacity=".2" />
+              <path d="M12 2C6.48 2 2 6.48 2 12" stroke="#4285F4" stroke-width="2" stroke-linecap="round" />
+              <path d="M12 2c5.52 0 10 4.48 10 10" stroke="#DB4437" stroke-width="2" stroke-linecap="round" />
+              <path d="M22 12c0 5.52-4.48 10-10 10" stroke="#F4B400" stroke-width="2" stroke-linecap="round" />
+              <path d="M2 12c0 5.52 4.48 10 10 10" stroke="#0F9D58" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            Google Cloud
+          </button>
+          <button class="prov-btn" data-provider="aws" onclick="setProvider('aws')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M3 17c5-3 13-3 18 0" stroke="#FF9900" stroke-width="2" stroke-linecap="round" />
+              <path d="M12 3v11" stroke="#FF9900" stroke-width="2" stroke-linecap="round" />
+              <circle cx="12" cy="17" r="2" fill="#FF9900" />
+            </svg>
+            AWS
+            <span class="prov-coming">Soon</span>
+          </button>
+          <button class="prov-btn" data-provider="azure" onclick="setProvider('azure')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M4 18L10 4l4 8-4 3 8 3H4z" stroke="#0078D4" stroke-width="1.5" stroke-linejoin="round" />
+            </svg>
+            Azure
+            <span class="prov-coming">Soon</span>
+          </button>
         </div>
 
         <div class="search-row">
