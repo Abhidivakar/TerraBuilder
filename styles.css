@@ -981,6 +981,13 @@ body::after {
   backdrop-filter: blur(12px);
 }
 
+[data-theme="light"] .fstat {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+
 .fstat-1 {
   right: -20px;
   top: 55px;
@@ -3099,7 +3106,23 @@ body::after {
 
 
 
+/* ═══ VIEW TRANSITION (theme ripple) ════════════════════ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
 /* ═══ PROVIDER BAR ════════════════════════════════════════ */
+
 .provider-bar {
   display: flex;
   align-items: center;

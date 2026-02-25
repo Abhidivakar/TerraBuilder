@@ -812,16 +812,53 @@ function downloadPipeline() {
 }
 
 // ── THEME TOGGLE ───────────────────────────────
-function toggleTheme() {
+function toggleTheme(event) {
   const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
   const next = isDark ? 'light' : 'dark';
-  if (next === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-  } else {
-    document.documentElement.removeAttribute('data-theme');
+
+  // Get click position for ripple origin (fallback to top-right)
+  const x = event?.clientX ?? window.innerWidth - 32;
+  const y = event?.clientY ?? 32;
+
+  // Max radius to cover whole screen from click point
+  const endRadius = Math.hypot(
+    Math.max(x, window.innerWidth - x),
+    Math.max(y, window.innerHeight - y)
+  );
+
+  const applyTheme = () => {
+    if (next === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem('tb-theme', next);
+  };
+
+  // Use View Transitions API if available (Chrome 111+, Safari 18+)
+  if (!document.startViewTransition) {
+    applyTheme();
+    return;
   }
-  localStorage.setItem('tb-theme', next);
+
+  const transition = document.startViewTransition(applyTheme);
+
+  transition.ready.then(() => {
+    const clipStart = `circle(0px at ${x}px ${y}px)`;
+    const clipEnd = `circle(${endRadius}px at ${x}px ${y}px)`;
+
+    // Animate the incoming ::view-transition-new(root) layer
+    document.documentElement.animate(
+      { clipPath: [clipStart, clipEnd] },
+      {
+        duration: 520,
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        pseudoElement: '::view-transition-new(root)',
+      }
+    );
+  });
 }
+
 
 // Restore saved theme on load
 (function applyTheme() {
