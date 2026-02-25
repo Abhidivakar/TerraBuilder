@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>TerraBuilder — AI Infrastructure Platform</title>
+  <meta name="description"
+    content="Drop your architecture diagram. TerraBuilder AI extracts resources and generates production-ready Terraform in seconds." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════ LOGIN ══ -->
+  <div id="pg-login">
+    <div class="login-mesh"></div>
+    <div class="login-box">
+      <div class="lb-logo">
+        <div class="logo-gem">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L4 7v10l8 5 8-5V7L12 2z" fill="url(#lg)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5" />
+            <path d="M12 2L4 7l8 5 8-5-8-5z" fill="rgba(255,255,255,0.15)" />
+            <defs>
+              <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#6366f1" />
+                <stop offset="100%" stop-color="#8b5cf6" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span>TerraBuilder</span>
+      </div>
+      <h1>Welcome back</h1>
+      <p class="lb-sub">Sign in to your workspace</p>
+      <form onsubmit="doLogin(event)">
+        <div class="fi">
+          <input id="lemail" type="email" placeholder="Email address" required autocomplete="email" />
+        </div>
+        <div class="fi">
+          <input id="lpass" type="password" placeholder="Password" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn-glow" id="lbtn">Sign In
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+        <button type="button" class="link-btn" onclick="showToast('Reset link sent to your email','success')">Forgot
+          password?</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ APP ══ -->
+  <div id="app" style="display:none">
+
+    <!-- NAV -->
+    <nav id="nav">
+      <div class="nav-inner">
+        <div class="nav-logo" onclick="go('home')">
+          <div class="logo-gem sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L4 7v10l8 5 8-5V7L12 2z" fill="url(#lng)" />
+              <defs>
+                <linearGradient id="lng" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#6366f1" />
+                  <stop offset="100%" stop-color="#8b5cf6" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span>TerraBuilder</span>
+        </div>
+        <div class="nav-links" id="navLinks">
+          <a class="nl active" id="nl-home" onclick="go('home')">Home</a>
+          <a class="nl" id="nl-build" onclick="go('build')">Build</a>
+          <a class="nl" id="nl-prompts" onclick="go('prompts')">Prompts</a>
+          <a class="nl" id="nl-cicd" onclick="go('cicd')">CI/CD</a>
+        </div>
+        <div class="nav-end">
+          <div class="nav-status" id="navStatus" style="display:none">
+            <span class="ns-dot"></span><span id="nsText">Processing…</span>
+          </div>
+          <button class="theme-btn" onclick="toggleTheme()" title="Toggle light/dark mode">
+            <!-- moon icon (dark mode) -->
+            <svg class="icon-moon" width="16" height="16" fill="none" viewBox="0 0 24 24">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <!-- sun icon (light mode) -->
+            <svg class="icon-sun" width="16" height="16" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.8" />
+              <path
+                d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </button>
+          <div class="av" onclick="showToast('Signed in as user@company.com','success')">U</div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ════════ HOME ════════ -->
+    <section class="pg" id="pg-home">
+
+      <!-- Hero: full two-column split -->
+      <div class="home-hero-wrap">
+        <div class="home-left">
+          <div class="pill-badge">
+            <span class="pulse-ring"></span>AI-Powered · GCP Infrastructure Generation
+          </div>
+          <h1 class="hero-h">Your architecture.<br /><em>Terraform in seconds.</em></h1>
+          <p class="hero-p">Drop your GCP architecture diagram. TerraBuilder's AI reads every service, extracts
+            resources, and writes production-ready Terraform — no manual configuration needed.</p>
+
+          <!-- Drop zone -->
+          <div class="home-drop" id="homeDrop" ondragover="hdOver(event,'homeDrop')" ondragleave="hdLeave('homeDrop')"
+            ondrop="hdDrop(event)">
+            <div class="hd-inner">
+              <div class="hd-icon">
+                <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" />
+                  <polyline points="17,8 12,3 7,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" />
+                </svg>
+              </div>
+              <div class="hd-text"><strong>Drop your architecture diagram</strong><span>PNG · JPG · PDF · Max
+                  10MB</span></div>
+              <label class="btn-outline-sm" for="homeFile">Browse files</label>
+              <input type="file" id="homeFile" accept=".png,.jpg,.jpeg,.pdf" onchange="homeFileSelect(event)"
+                style="display:none" />
+            </div>
+          </div>
+
+          <div class="hero-cta-row">
+            <button class="btn-glow" onclick="go('build')">Start building
+              <svg width="13" height="13" fill="none" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+            <a class="hero-link" onclick="go('prompts')">Browse prompts →</a>
+          </div>
+        </div>
+
+        <!-- Right: animated terminal mockup -->
+        <div class="home-right">
+          <div class="term-window">
+            <div class="term-bar">
+              <span class="term-dot td-r"></span>
+              <span class="term-dot td-y"></span>
+              <span class="term-dot td-g"></span>
+              <span class="term-title">terminal — terrabuilder ai</span>
+            </div>
+            <div class="term-body" id="termBody"></div>
+          </div>
+          <!-- Floating stat cards -->
+          <div class="fstat fstat-1">
+            <div class="fstat-num">28+</div>
+            <div class="fstat-lbl">GCP Services</div>
+          </div>
+          <div class="fstat fstat-2">
+            <div class="fstat-num gg">~8m</div>
+            <div class="fstat-lbl">Avg. Generate Time</div>
+          </div>
+          <div class="fstat fstat-3">
+            <div class="fstat-num" style="color:#f59e0b">4</div>
+            <div class="fstat-lbl">CI/CD Platforms</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="stats-strip">
+        <div class="ss-item">
+          <span class="ss-num ss-n-a">100%</span>
+          <span class="ss-lbl">AI‑generated Terraform</span>
+        </div>
+        <div class="ss-div"></div>
+        <div class="ss-item">
+          <span class="ss-num ss-n-b">28</span>
+          <span class="ss-lbl">GCP services</span>
+        </div>
+        <div class="ss-div"></div>
+        <div class="ss-item">
+          <span class="ss-num ss-n-c">4</span>
+          <span class="ss-lbl">CI/CD platforms</span>
+        </div>
+        <div class="ss-div"></div>
+        <div class="ss-item">
+          <span class="ss-num ss-n-d">Zero</span>
+          <span class="ss-lbl">Manual configuration</span>
+        </div>
+      </div>
+
+
+      <!-- Feature cards -->
+      <div class="home-features">
+        <div class="hf-card hf-card-arch" onclick="go('build')">
+          <div class="hf-inner">
+            <div class="hf-top">
+              <div class="hf-icon si-arch">
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+              <span class="hf-badge hf-badge-a">AI Build</span>
+            </div>
+            <div class="hf-body">
+              <strong>Architecture → Terraform</strong>
+              <p>Drop your GCP diagram. The AI reads every service node, extracts resources, and writes production-ready
+                Terraform instantly.</p>
+            </div>
+          </div>
+          <div class="hf-footer">
+            <span class="hf-link">Open builder</span>
+            <svg class="hf-arrow" width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+        </div>
+        <div class="hf-card hf-card-prompt" onclick="go('prompts')">
+          <div class="hf-inner">
+            <div class="hf-top">
+              <div class="hf-icon si-prompt">
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                  <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M9 9h6M9 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </div>
+              <span class="hf-badge hf-badge-b">28 Services</span>
+            </div>
+            <div class="hf-body">
+              <strong>Prompt Library</strong>
+              <p>V1 Basic and V2 Modular Terraform prompts for every major GCP service. Download in one click and use
+                with any LLM.</p>
+            </div>
+          </div>
+          <div class="hf-footer">
+            <span class="hf-link">Browse prompts</span>
+            <svg class="hf-arrow" width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+        </div>
+        <div class="hf-card hf-card-cicd" onclick="go('cicd')">
+          <div class="hf-inner">
+            <div class="hf-top">
+              <div class="hf-icon si-cicd">
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+                  <path
+                    d="M12 3v4M5.6 5.6l2.8 2.8M3 12h4M5.6 18.4l2.8-2.8M12 21v-4M18.4 18.4l-2.8-2.8M21 12h-4M18.4 5.6l-2.8 2.8"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </div>
+              <span class="hf-badge hf-badge-c">4 Platforms</span>
+            </div>
+            <div class="hf-body">
+              <strong>CI/CD Pipeline Builder</strong>
+              <p>GitHub Actions, GitLab CI, Cloud Build, Jenkins. Configure once, get a production YAML pipeline ready
+                to commit.</p>
+            </div>
+          </div>
+          <div class="hf-footer">
+            <span class="hf-link">Build pipeline</span>
+            <svg class="hf-arrow" width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ════════ BUILD (Architecture AI Flow) ════════ -->
+    <section class="pg" id="pg-build">
+      <div class="build-wrap">
+
+        <!-- TOP BAR: project selector + status trail -->
+        <div class="build-topbar">
+          <div class="proj-selector" id="projDropdown" onclick="toggleProjDrop(event)">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+              <path d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" stroke="currentColor"
+                stroke-width="1.5" />
+            </svg>
+            <span id="projSelLabel">Select project…</span>
+            <svg class="ps-chevron" width="12" height="12" fill="none" viewBox="0 0 24 24">
+              <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+            <div class="proj-drop-list" id="projDropList">
+              <div class="pdl-item pdl-placeholder" onclick="chooseProjItem(event,'')">Select project…</div>
+              <div class="pdl-item" onclick="chooseProjItem(event,'ab-test')">ab-test</div>
+              <div class="pdl-item" onclick="chooseProjItem(event,'gc-player-test')">gc-player-test</div>
+              <div class="pdl-item" onclick="chooseProjItem(event,'gcp-proj-sample')">gcp-proj-sample</div>
+              <div class="pdl-item" onclick="chooseProjItem(event,'test-proj-cn')">test-proj-cn</div>
+              <div class="pdl-item" onclick="chooseProjItem(event,'test-medium')">test-medium</div>
+              <div class="pdl-item" onclick="chooseProjItem(event,'test-cicd')">test-cicd</div>
+            </div>
+          </div>
+          <button class="new-proj-btn" onclick="openNewProj()">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
+              <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            New Project
+          </button>
+          <div class="build-trail" id="buildTrail">
+            <span class="trail-step active" id="ts1">Upload</span>
+            <span class="trail-sep">›</span>
+            <span class="trail-step" id="ts2">Extract</span>
+            <span class="trail-sep">›</span>
+            <span class="trail-step" id="ts3">Configure</span>
+            <span class="trail-sep">›</span>
+            <span class="trail-step" id="ts4">Generate</span>
+          </div>
+        </div>
+
+        <!-- STAGE 1: UPLOAD -->
+        <div class="build-stage" id="stage-upload">
+          <div class="stage-drop" id="stageDrop" ondragover="hdOver(event,'stageDrop')"
+            ondragleave="hdLeave('stageDrop')" ondrop="hdDropBuild(event)">
+            <div class="sd-content" id="sdContent">
+              <div class="sd-ring">
+                <div class="sd-icon">
+                  <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="1.5"
+                      stroke-linecap="round" />
+                    <polyline points="17,8 12,3 7,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                    <line x1="12" y1="3" x2="12" y2="15" stroke="currentColor" stroke-width="1.5"
+                      stroke-linecap="round" />
+                  </svg>
+                </div>
+              </div>
+              <h2 class="sd-title">Drop your architecture diagram</h2>
+              <p class="sd-sub">Drag &amp; drop any PNG, JPG, or PDF diagram here. Our AI will analyze it instantly.</p>
+              <div class="sd-actions">
+                <label class="btn-glow" for="buildFile">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor"
+                      stroke-width="2" />
+                    <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" />
+                  </svg>
+                  Choose file
+                </label>
+                <input type="file" id="buildFile" accept=".png,.jpg,.jpeg,.pdf" onchange="buildFileSelect(event)"
+                  style="display:none" />
+                <span class="sd-hint">or drag and drop</span>
+              </div>
+              <div class="sd-formats">
+                <span>PNG</span><span>JPG</span><span>PDF</span>
+              </div>
+            </div>
+
+            <!-- File selected state -->
+            <div class="sd-selected" id="sdSelected" style="display:none">
+              <div class="file-preview-area" id="filePreviewArea"></div>
+              <div class="file-meta">
+                <div class="fm-info">
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor"
+                      stroke-width="1.5" />
+                    <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.5" />
+                  </svg>
+                  <div>
+                    <strong id="fileName">diagram.png</strong>
+                    <span id="fileSize">2.1 MB</span>
+                  </div>
+                </div>
+                <div class="fm-actions">
+                  <button class="icon-btn" onclick="clearBuildFile()" title="Remove">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <button class="btn-glow btn-full" onclick="runExtraction()">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                  <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                Analyze with AI
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STAGE 2: AI EXTRACTION (auto) -->
+        <div class="build-stage" id="stage-extract" style="display:none">
+          <div class="extract-view">
+            <div class="ex-status">
+              <div class="ai-spinner">
+                <div class="sp-ring"></div>
+                <div class="sp-logo">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L4 7v10l8 5 8-5V7L12 2z" fill="url(#sp)" />
+                    <defs>
+                      <linearGradient id="sp" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#6366f1" />
+                        <stop offset="100%" stop-color="#8b5cf6" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+              <div class="ex-text">
+                <h3 id="exHeading">Analyzing your diagram…</h3>
+                <p id="exSub">AI is reading architecture patterns and identifying GCP services</p>
+              </div>
+            </div>
+            <div class="ex-log" id="exLog"></div>
+          </div>
+        </div>
+
+        <!-- STAGE 3: CONFIGURE -->
+        <div class="build-stage" id="stage-config" style="display:none">
+          <div class="config-view">
+            <div class="cv-header">
+              <div>
+                <h2>Resources found <span class="cv-count" id="cvCount">0</span></h2>
+                <p>AI extracted these GCP services from your diagram. Remove any that don't apply.</p>
+              </div>
+            </div>
+
+            <div class="resource-chips" id="resourceChips"></div>
+
+            <div class="cv-add">
+              <input type="text" id="addResInput" class="add-res-input" placeholder="Add resource (e.g. cloud-run)…"
+                onkeydown="addResKey(event)" />
+              <button class="btn-outline-sm" onclick="addResFromInput()">Add</button>
+            </div>
+
+            <div class="config-env">
+              <h3>Environment profile</h3>
+              <p>Choose how resources are sized. AI recommends based on your services.</p>
+              <div class="env-pills">
+                <button class="ep" id="ep-dev" onclick="selectEnv('dev')">
+                  <strong>Dev</strong>
+                  <span>Minimal resources · Fast iteration</span>
+                </button>
+                <button class="ep" id="ep-staging" onclick="selectEnv('staging')">
+                  <div class="ep-rec">Recommended</div>
+                  <strong>Staging</strong>
+                  <span>Balanced · Mirrors production</span>
+                </button>
+                <button class="ep ep-active" id="ep-prod" onclick="selectEnv('prod')">
+                  <strong>Production</strong>
+                  <span>High availability · Auto-scaling</span>
+                </button>
+              </div>
+            </div>
+
+            <button class="btn-glow btn-lg" onclick="generateTerraform()" id="genBtn">
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+              Generate Terraform
+            </button>
+          </div>
+        </div>
+
+        <!-- STAGE 4: GENERATING -->
+        <div class="build-stage" id="stage-generating" style="display:none">
+          <div class="gen-view">
+            <div class="gen-status">
+              <div class="ai-spinner">
+                <div class="sp-ring green-ring"></div>
+                <div class="sp-logo">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L4 7v10l8 5 8-5V7L12 2z" fill="url(#sp2)" />
+                    <defs>
+                      <linearGradient id="sp2" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#22c55e" />
+                        <stop offset="100%" stop-color="#16a34a" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h3>Generating Terraform modules…</h3>
+                <p>Compiling infrastructure-as-code for your resources</p>
+              </div>
+            </div>
+            <div class="gen-code-preview" id="genCodePreview"></div>
+          </div>
+        </div>
+
+        <!-- STAGE 5: DONE -->
+        <div class="build-stage" id="stage-done" style="display:none">
+          <div class="done-view">
+            <div class="done-check">
+              <svg width="28" height="28" fill="none" viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </div>
+            <h2>Terraform ready</h2>
+            <p>Your infrastructure code has been generated for <strong id="doneProjName">your project</strong></p>
+
+            <div class="done-files" id="doneFiles"></div>
+
+            <div class="done-actions">
+              <button class="btn-glow" onclick="downloadTF()">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" />
+                  <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                Download .zip
+              </button>
+              <button class="btn-outline" onclick="resetBuild()">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                  <path d="M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" />
+                  <path d="M21 3v5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                Start over
+              </button>
+              <button class="btn-outline" onclick="go('cicd')">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                  <path
+                    d="M12 3v4M5.6 5.6l2.8 2.8M3 12h4M5.6 18.4l2.8-2.8M12 21v-4M18.4 18.4l-2.8-2.8M21 12h-4M18.4 5.6l-2.8 2.8"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+                Set up CI/CD →
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ════════ PROMPTS ════════ -->
+    <section class="pg" id="pg-prompts">
+      <div class="prompts-wrap">
+        <div class="prompts-header">
+          <div>
+            <h1>Prompt Library</h1>
+            <p>Pre-built AI prompts for 28 GCP services. V1 for direct snippets, V2 for production modules.</p>
+          </div>
+          <div class="version-toggle">
+            <button class="vt-btn active" id="vt-v1" onclick="setVersion('v1')">V1 Basic</button>
+            <button class="vt-btn" id="vt-v2" onclick="setVersion('v2')">V2 Modular</button>
+          </div>
+        </div>
+
+        <!-- Version info strip -->
+        <div class="ver-info" id="verInfo">
+          <div class="vi-item">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" />
+              <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            <span id="viText">V1 — Single resource block, static values, great for quick snippets</span>
+          </div>
+        </div>
+
+        <div class="search-row">
+          <div class="srch">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5" />
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            <input type="text" id="srchInput" placeholder="Search services…" oninput="filterSvcs()" />
+            <button style="background:none;border:none;cursor:pointer;color:#64748b;padding:2px" id="srchClear"
+              onclick="clearSrch()" style="display:none">✕</button>
+          </div>
+          <div class="srch-count" id="srchCount">28 services</div>
+        </div>
+
+        <div class="services-grid" id="servicesGrid"></div>
+
+        <div class="empty-state" id="emptyState" style="display:none">
+          <svg width="36" height="36" fill="none" viewBox="0 0 24 24" opacity="0.3">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5" />
+            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.5" />
+          </svg>
+          <p>No results for "<span id="emptyQ"></span>"</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ CI/CD ════════ -->
+    <section class="pg" id="pg-cicd">
+      <div class="cicd-wrap">
+        <div class="cicd-header">
+          <h1>CI/CD Pipeline Builder</h1>
+          <p>Select your platform and get a production-ready pipeline YAML in seconds.</p>
+        </div>
+
+        <!-- Platform selector: big visual tiles -->
+        <div class="platform-grid">
+          <div class="plat-tile" id="pt-github" onclick="selectPlat('github')">
+            <div class="plat-icon">⬡</div>
+            <strong>GitHub Actions</strong>
+            <span>Native GitHub CI/CD</span>
+          </div>
+          <div class="plat-tile" id="pt-gitlab" onclick="selectPlat('gitlab')">
+            <div class="plat-icon">🦊</div>
+            <strong>GitLab CI/CD</strong>
+            <span>Built-in pipelines</span>
+          </div>
+          <div class="plat-tile" id="pt-cloudbuild" onclick="selectPlat('cloudbuild')">
+            <div class="plat-icon">☁️</div>
+            <strong>Cloud Build</strong>
+            <span>GCP native CI/CD</span>
+          </div>
+          <div class="plat-tile" id="pt-jenkins" onclick="selectPlat('jenkins')">
+            <div class="plat-icon">🏗️</div>
+            <strong>Jenkins</strong>
+            <span>Self-hosted pipelines</span>
+          </div>
+        </div>
+
+        <!-- Config panel (shown after platform pick) -->
+        <div class="cicd-panel" id="cicdPanel" style="display:none">
+          <div class="cp-left">
+            <h3 id="cpTitle">Configure Pipeline</h3>
+
+            <div class="cp-section">
+              <label>Branch triggers</label>
+              <div class="toggle-row">
+                <span>Push to branch</span>
+                <label class="toggle"><input type="checkbox" checked id="pushTrig"
+                    onchange="liveUpdateYaml()" /><span></span></label>
+              </div>
+              <div class="toggle-row">
+                <span>Pull requests</span>
+                <label class="toggle"><input type="checkbox" checked id="prTrig"
+                    onchange="liveUpdateYaml()" /><span></span></label>
+              </div>
+              <input type="text" class="small-input" id="branchInput" placeholder="Branch names (e.g. main, develop)"
+                value="main" oninput="liveUpdateYaml()" />
+            </div>
+
+            <div class="cp-section">
+              <label>Environments</label>
+              <div class="env-checks">
+                <label class="ck"><input type="checkbox" checked id="envDev" onchange="liveUpdateYaml()" />
+                  Development</label>
+                <label class="ck"><input type="checkbox" checked id="envStaging" onchange="liveUpdateYaml()" />
+                  Staging</label>
+                <label class="ck"><input type="checkbox" id="envProd" onchange="liveUpdateYaml()" /> Production</label>
+              </div>
+            </div>
+
+            <div class="cp-section">
+              <label>Deployment mode</label>
+              <div class="radio-row">
+                <label class="rdo"><input type="radio" name="dm" value="progressive" checked
+                    onchange="liveUpdateYaml()" /> Progressive</label>
+                <label class="rdo"><input type="radio" name="dm" value="manual" onchange="liveUpdateYaml()" /> Manual
+                  approval</label>
+                <label class="rdo"><input type="radio" name="dm" value="auto" onchange="liveUpdateYaml()" /> Fully
+                  automated</label>
+              </div>
+            </div>
+
+            <div class="cp-section">
+              <label>Terraform version</label>
+              <input type="text" class="small-input" id="tfVersion" value="1.5.0" oninput="liveUpdateYaml()" />
+            </div>
+
+            <div class="cp-actions">
+              <button class="btn-glow" onclick="downloadPipeline()">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" />
+                  <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                Download Pipeline
+              </button>
+            </div>
+          </div>
+          <div class="cp-right">
+            <div class="yaml-preview">
+              <!-- VS Code title bar -->
+              <div class="yp-titlebar">
+                <div class="yp-tab">
+                  <span class="yp-tab-dot"></span>
+                  <span class="yp-tab-name" id="yamlFileName">pipeline.yml</span>
+                  <span class="yp-tab-close">&#xD7;</span>
+                </div>
+                <div class="yp-actions">
+                  <button class="yp-action-btn" onclick="copyYaml()">
+                    <svg width="11" height="11" fill="none" viewBox="0 0 24 24">
+                      <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.8" />
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor"
+                        stroke-width="1.8" />
+                    </svg>
+                    Copy
+                  </button>
+                  <button class="yp-action-btn" onclick="downloadPipeline()">
+                    <svg width="11" height="11" fill="none" viewBox="0 0 24 24">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="1.8" />
+                      <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" />
+                      <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" />
+                    </svg>
+                    Save
+                  </button>
+                </div>
+              </div>
+              <!-- Breadcrumb (full path — filled by JS) -->
+              <div class="yp-breadcrumb" id="ypBreadcrumb">
+                <span style="color:#555">select a platform…</span>
+              </div>
+              <!-- Editor: gutter + code -->
+              <div class="yp-editor">
+                <div class="yp-gutter" id="ypGutter"></div>
+                <pre id="yamlContent" class="yaml-code"></pre>
+              </div>
+              <!-- VS Code status bar -->
+              <div class="yp-statusbar">
+                <div class="yp-statusbar-left">
+                  <span id="ypPlatformStatus">GitHub Actions</span>
+                  <span>YAML</span>
+                </div>
+                <div class="yp-statusbar-right">
+                  <span id="ypLineCount">0 lines</span>
+                  <span>UTF-8</span>
+                  <span>LF</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cicd-empty" id="cicdEmpty">
+          <p>Choose a platform above to get started</p>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /app -->
+
+  <!-- ── New Project Overlay ── -->
+  <div class="overlay" id="newProjOverlay" onclick="closeNewProj(event)">
+    <div class="overlay-box">
+      <h3>New Project</h3>
+      <input type="text" id="newProjInput" class="overlay-input" placeholder="my-terraform-project"
+        onkeydown="if(event.key==='Enter')createProj()" />
+      <div class="overlay-actions">
+        <button class="btn-outline" onclick="closeNewProj()">Cancel</button>
+        <button class="btn-glow" onclick="createProj()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
